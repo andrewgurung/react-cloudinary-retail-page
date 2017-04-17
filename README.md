@@ -14,7 +14,7 @@ Installation
 
 2. Create new app
 
-  ```create-react-app cloudinary-retail-page```
+  ```create-react-app react-cloudinary-retail-page```
 
 3. Install Cloudinary React library
 
