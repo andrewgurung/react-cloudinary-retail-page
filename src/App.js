@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
 import {Image, CloudinaryContext, Transformation} from 'cloudinary-react';
+import { SketchPicker } from 'react-color';
 
-import logo from './logo.svg';
 import './App.css';
 
 const ImageTransformations = ({width, rgb, selectedShirt, text}) => {
   return (
     <Image publicId={selectedShirt.main+'.jpg'}>
       <Transformation width={width} crop="scale"/>
+      <Transformation effect={'red:'+((-1+rgb.r/255)*100).toFixed(0)} />
+      <Transformation effect={'blue:'+((-1+rgb.b/255)*100).toFixed(0)} />
+      <Transformation effect={'green:'+((-1+rgb.g/255)*100).toFixed(0)} />
+      <Transformation underlay={selectedShirt.underlay}  flags="relative" width="1.0" />
+      <Transformation overlay={selectedShirt.overlay}  flags="relative" width="1.0"  />
+      <Transformation overlay={'text:Roboto_30:'+text} flags="relative" gravity="center" />
     </Image>
   );
 };
@@ -28,17 +34,31 @@ class App extends Component {
     };
   }
 
-  selectedShirt(thumb) {
+  handleColorChange(color) {
+    this.setState({ background: color}, _ => this.forceUpdate());
+  }
+
+  handleTextChange(event) {
+    this.setState({text: event.target.value}, _ => this.forceUpdate())
+  }
+
+  selectShirt(thumb) {
     this.setState({selectedShirt: thumb}, _ => this.forceUpdate())
   }
 
   render() {
     const rgb = this.state.background.rgb;
+
     return (
       <div className="App">
         <CloudinaryContext cloudName="christekh">
-          <div className="imageDemoContainer">
-            <div className="mainImage">
+          <div id="demoContainer">
+            <div id="header">
+              <h1>React Cloudinary Retail Page</h1>
+            </div>
+          </div>
+          <div id="imageDemoContainer">
+            <div id="mainImage">
               <ImageTransformations
                 width="600"
                 rgb={rgb}
@@ -47,8 +67,8 @@ class App extends Component {
             </div>
             <div id="imageThumbs">
               <ul id="thumbs">
-                 {this.state.shirts.map(thumb => {
-                    return (
+                {this.state.shirts.map(thumb => {
+                  return (
                     <li className={thumb.main === this.state.selectedShirt.main ? 'active': ''} onClick={this.selectShirt.bind(this, thumb)} key={thumb.id}>
                       <ImageTransformations
                         width="75"
@@ -56,10 +76,23 @@ class App extends Component {
                         selectedShirt={thumb}
                         text={' '} />
                     </li>
-                    )
-                 })}
-               </ul>
-             </div>
+                  )
+                })}
+             </ul>
+            </div>
+          </div>
+          <div id="demoInputContainer">
+            <div className="inputSelections">
+              <h2>Shirt Color:</h2>
+              <SketchPicker
+                  color={ this.state.background.hex }
+                  onChangeComplete={ this.handleColorChange.bind(this) }
+              />
+            </div>
+            <div className="inputSelections">
+              <h2>Text:</h2>
+              <input className="form-control" type="email" placeholder="Enter text" value={this.state.text} onChange={this.handleTextChange.bind(this)} />
+            </div>
           </div>
         </CloudinaryContext>
       </div>
