@@ -45,7 +45,21 @@ class App extends Component {
                 selectedShirt={this.state.selectedShirt}
                 text={this.state.text}/>
             </div>
-    
+            <div id="imageThumbs">
+              <ul id="thumbs">
+                 {this.state.shirts.map(thumb => {
+                    return (
+                    <li className={thumb.main === this.state.selectedShirt.main ? 'active': ''} onClick={this.selectShirt.bind(this, thumb)} key={thumb.id}>
+                      <ImageTransformations
+                        width="75"
+                        rgb={rgb}
+                        selectedShirt={thumb}
+                        text={' '} />
+                    </li>
+                    )
+                 })}
+               </ul>
+             </div>
           </div>
         </CloudinaryContext>
       </div>
